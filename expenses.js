@@ -13,27 +13,21 @@ fs.readFile("data.dat", "utf8", (err, data) => {
     const categoryTotals = {};
     const nameTotals = {};
 
-    const categories = ["a", "b", "c", "d", "e", "f"];
-    const names = ["I", "J", "K", "L", "M", "N"];
-
-    categories.forEach((category) => {
-      categoryTotals[category] = 0;
-    });
-
-    names.forEach((name) => {
-      nameTotals[name] = 0;
-    });
+    const categories = new Set();
+    const names = new Set();
 
     jsonData.forEach((item) => {
       const key = Object.keys(item)[0];
       const { nm, amt } = item[key];
 
-      categoryTotals[key] += Number(amt);
-      nameTotals[nm] += Number(amt);
-      totals += Number(amt);
+      categories.add(key);
+      names.add(nm);
+
+      categoryTotals[key] = (categoryTotals[key] || 0) + Number(amt);
+      nameTotals[nm] = (nameTotals[nm] || 0) + Number(amt);
+      totals = (totals || 0) + Number(amt);
     });
 
-    // Convert categoryTotals and nameTotals into arrays
     const sortedCategoryTotals = Object.entries(categoryTotals)
       .sort((a, b) => a[1] - b[1])
       .reduce((obj, [key, value]) => {
@@ -48,8 +42,6 @@ fs.readFile("data.dat", "utf8", (err, data) => {
         return obj;
       }, {});
 
-
-          // Calculate the sum of all categories and names
     console.log("Totals by categories (sorted):");
     console.log(sortedCategoryTotals);
     console.log("Totals by names (sorted):");
